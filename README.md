@@ -6,6 +6,15 @@
 
 
 </div>
+
+
+## 本地部署
+
+1. 创建环境：运行 `build_environment.bat`。如果你没有Python请在[微软商店](https://apps.microsoft.com/detail/9nrwmjp3717k)下载，请使用3.10及以上版本。脚本使用了国内镜像，如果是国外用户请删去bat文件第二行。
+
+2. 下载模型：下载[ToonCrafter半精度模型](https://huggingface.co/Kijai/DynamiCrafter_pruned/resolve/main/tooncrafter_512_interp-fp16.safetensors)模型，解压后放入`checkpoints/tooncrafter_512_interp_v1/model.ckpt`。
+
+2. 运行ToonCrafter：运行 `run.bat`，按照数字提示进行。CLIP模型会在第一次使用的时候自动下载，脚本使用了国内镜像，如果是国外用户请删去bat文件第一行。建议使用3090及以上显卡，否则可能会出现显存不足或运行缓慢的情况，3090一次运行大概90秒左右。
  
 ## 🔆 Introduction
 
@@ -205,7 +214,7 @@
 
 |Model|Resolution|GPU Mem. & Inference Time (A100, ddim 50steps)|Checkpoint|
 |:---------|:---------|:--------|:--------|
-|ToonCrafter_512|320x512| TBD (`perframe_ae=True`)|[Hugging Face](https://huggingface.co/Doubiiu/ToonCrafter/blob/main/model.ckpt)|
+|ToonCrafter_512|320x512| TBD (`perframe_ae=True`)|[Hugging Face](https://huggingface.co/Kijai/DynamiCrafter_pruned/resolve/main/tooncrafter_512_interp-fp16.safetensors)|
 
 
 Currently, our ToonCrafter can support generating videos of up to 16 frames with a resolution of 512x320. The inference time can be reduced by using fewer DDIM steps.

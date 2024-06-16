@@ -8,3 +8,5 @@ checkpoints
 results
 backup
 LOG
+venv/
+python_embeded/

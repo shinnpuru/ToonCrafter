@@ -9,7 +9,7 @@ Pillow==9.5.0
 pytorch_lightning==1.9.3
 PyYAML==6.0
 setuptools==65.6.3
-torch==2.0.0
+torch
 torchvision
 tqdm==4.65.0
 transformers==4.25.1
@@ -21,3 +21,4 @@ timm
 scikit-learn 
 open_clip_torch==2.22.0
 kornia
+--extra-index-url  https://download.pytorch.org/whl/cu121

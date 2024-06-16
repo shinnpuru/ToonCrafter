@@ -165,6 +165,8 @@ class DDIMSampler(object):
 
         clean_cond = kwargs.pop("clean_cond", False)
 
+        import time
+        st = time.time()
         # cond_copy, unconditional_conditioning_copy = copy.deepcopy(cond), copy.deepcopy(unconditional_conditioning)
         for i, step in enumerate(iterator):
             index = total_steps - i - 1
@@ -200,6 +202,7 @@ class DDIMSampler(object):
                 intermediates['x_inter'].append(img)
                 intermediates['pred_x0'].append(pred_x0)
 
+            print(f"step: {i}/{total_steps}, estimated time left: {(time.time() - st) * (total_steps - 1 - i) / (i + 1):.2f} seconds")
         return img, intermediates
 
     @torch.no_grad()
