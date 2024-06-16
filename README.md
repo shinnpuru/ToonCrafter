@@ -14,7 +14,7 @@
 
 2. 下载模型：下载[ToonCrafter半精度模型](https://huggingface.co/Kijai/DynamiCrafter_pruned/resolve/main/tooncrafter_512_interp-fp16.safetensors)模型，解压后放入`checkpoints/tooncrafter_512_interp_v1/model.ckpt`。
 
-2. 运行ToonCrafter：运行 `run.bat`，按照数字提示进行。CLIP模型会在第一次使用的时候自动下载，脚本使用了国内镜像，如果是国外用户请删去bat文件第一行。建议使用3090及以上显卡，否则可能会出现显存不足或运行缓慢的情况，3090一次运行大概90秒左右。
+2. 运行ToonCrafter：运行 `run.bat`，按照数字提示进行。CLIP模型会在第一次使用的时候自动下载，脚本使用了国内镜像，如果是国外用户请删去bat文件第一行。建议使用3090及以上显卡，否则可能会出现显存不足或运行缓慢的情况，3090一次运行大概50秒左右。
  
 ## 🔆 Introduction
 
