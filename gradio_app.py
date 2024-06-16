@@ -1,5 +1,6 @@
 import os, argparse
 import sys
+sys.path.append(os.path.dirname(__file__))
 import gradio as gr
 from scripts.gradio.i2v_test_application import Image2Video
 sys.path.insert(1, os.path.join(sys.path[0], 'lvdm'))
@@ -42,7 +43,7 @@ def dynamicrafter_demo(result_dir='./tmp/', res=512):
                         with gr.Row():
                             i2v_seed = gr.Slider(label='Random Seed', minimum=0, maximum=50000, step=1, value=123)
                             i2v_eta = gr.Slider(minimum=0.0, maximum=1.0, step=0.1, label='ETA', value=1.0, elem_id="i2v_eta")
-                            i2v_cfg_scale = gr.Slider(minimum=1.0, maximum=15.0, step=0.5, label='CFG Scale', value=7.5, elem_id="i2v_cfg_scale")
+                            i2v_cfg_scale = gr.Slider(minimum=1.0, maximum=15.0, step=0.5, label='CFG Scale', value=3, elem_id="i2v_cfg_scale")
                         with gr.Row():
                             i2v_steps = gr.Slider(minimum=1, maximum=60, step=1, elem_id="i2v_steps", label="Sampling steps", value=50)
                             i2v_motion = gr.Slider(minimum=5, maximum=30, step=1, elem_id="i2v_motion", label="FPS", value=10)
@@ -51,16 +52,12 @@ def dynamicrafter_demo(result_dir='./tmp/', res=512):
                         with gr.Row():
                             i2v_input_image2 = gr.Image(label="Input Image2",elem_id="input_img2")
                         with gr.Row():
-                            i2v_output_video = gr.Video(label="Generated Video",elem_id="output_vid",autoplay=True,show_share_button=True)
+                            i2v_output_video = gr.Video(label="Generated Video",elem_id="output_vid",autoplay=True)
+                        with gr.Row():
+                            i2v_output_gif = gr.File(label="Generated GIF")
 
-                gr.Examples(examples=i2v_examples_interp_512,
-                            inputs=[i2v_input_image, i2v_input_text, i2v_steps, i2v_cfg_scale, i2v_eta, i2v_motion, i2v_seed, i2v_input_image2],
-                            outputs=[i2v_output_video],
-                            fn = image2video.get_image,
-                            cache_examples=False,
-                )
             i2v_end_btn.click(inputs=[i2v_input_image, i2v_input_text, i2v_steps, i2v_cfg_scale, i2v_eta, i2v_motion, i2v_seed, i2v_input_image2],
-                            outputs=[i2v_output_video],
+                            outputs=[i2v_output_video, i2v_output_gif],
                             fn = image2video.get_image
             )
 
@@ -78,5 +75,5 @@ if __name__ == "__main__":
     result_dir = os.path.join('./', 'results')
     dynamicrafter_iface = dynamicrafter_demo(result_dir)
     dynamicrafter_iface.queue(max_size=12)
-    dynamicrafter_iface.launch(max_threads=1)
+    dynamicrafter_iface.launch(inbrowser=True,max_threads=1)
     # dynamicrafter_iface.launch(server_name='0.0.0.0', server_port=80, max_threads=1)

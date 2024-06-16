@@ -9,6 +9,8 @@ from einops import repeat
 import torchvision.transforms as transforms
 from pytorch_lightning import seed_everything
 from einops import rearrange
+import numpy as np
+from PIL import Image
 
 class Image2Video():
     def __init__(self,result_dir='./tmp/',gpu_num=1,resolution='256_256') -> None:
@@ -36,6 +38,13 @@ class Image2Video():
         self.save_fps = 8
 
     def get_image(self, image, prompt, steps=50, cfg_scale=7.5, eta=1.0, fs=3, seed=123, image2=None):
+        # if transparence in image, transform it to rgb
+        image = np.array(Image.fromarray(image).convert('RGB'))
+        print("image size:", image.shape, "resolution:", self.resolution)
+        factor = min(self.resolution) / min(image.shape[0], image.shape[1])
+        image_size = [min(int(image.shape[0] * factor),self.resolution[0]), min(int(image.shape[1] * factor), self.resolution[1])]
+        print("image size:", image_size)
+
         seed_everything(seed)
         transform = transforms.Compose([
             transforms.Resize(min(self.resolution)),
@@ -109,11 +118,24 @@ class Image2Video():
             if len(prompt_str) == 0:
                 prompt_str = 'empty_prompt'
 
+        # crop to the original size
+        print("batch_samples shape:", batch_samples.shape)
+        batch_samples = batch_samples[:, :, :, :,
+            self.resolution[0]//2-image_size[0]//2:self.resolution[0]//2+image_size[0]//2, 
+            self.resolution[1]//2-image_size[1]//2:self.resolution[1]//2+image_size[1]//2
+        ]
+        print("batch_samples shape:", batch_samples.shape)
+
         save_videos(batch_samples, self.result_dir, filenames=[prompt_str], fps=self.save_fps)
         print(f"Saved in {prompt_str}. Time used: {(time.time() - start):.2f} seconds")
         model = model.cpu()
-        return os.path.join(self.result_dir, f"{prompt_str}.mp4")
-    
+
+        # mp4 to gif
+        print("batch_samples shape:", ((batch_samples[0,0,:,0].permute(1,2,0).cpu().numpy().clip(-1,1) + 1)/2 * 255).astype(np.uint8).shape)
+        frames = [Image.fromarray(((batch_samples[0,0,:,i].permute(1,2,0).cpu().numpy().clip(-1,1) + 1)/2 * 255).astype(np.uint8)) for i in range(batch_samples.shape[3])]
+        frames[0].save(os.path.join(self.result_dir, f"{prompt_str}.gif"), save_all=True, append_images=frames[1:], loop=0, duration=1000//self.save_fps)
+        return os.path.join(self.result_dir, f"{prompt_str}.mp4"), os.path.join(self.result_dir, f"{prompt_str}.gif")
+
     def download_model(self):
         REPO_ID = 'Doubiiu/ToonCrafter'
         filename_list = ['model.ckpt']
